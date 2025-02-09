@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Максим Горький</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1c1c1c;
+            color: white;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .section {
+            padding: 50px 20px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s ease-in-out;
+        }
+        .visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .quiz {
+            background: #2c2c2c;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+        button {
+            background-color: #444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="section"> <h1>Максим Горький</h1> </div>
+    <div class="section"> <h2>Детство и юность</h2> <p>Горький рано потерял родителей и с детства работал.</p> </div>
+    <div class="section"> <h2>Литературная карьера</h2> <p>Известность принесли рассказы «Макар Чудра», «Старуха Изергиль».</p> </div>
+    <div class="section"> <h2>Политическая деятельность</h2> <p>Поддерживал революционные идеи, дружил с Лениным.</p> </div>
+    <div class="section"> <h2>Последние годы</h2> <p>Умер в 1936 году при невыясненных обстоятельствах.</p> </div>
+    
+    <div class="section">
+        <button onclick="startQuiz()">Играть</button>
+    </div>
+    
+    <div class="section quiz" id="quiz">
+        <h2>Викторина</h2>
+        <p id="question">Вопрос 1</p>
+        <div id="answers"></div>
+        <p id="timer">Оставшееся время: 30 сек.</p>
+        <button onclick="nextQuestion()">Далее</button>
+        <p id="score">Очки: 0</p>
+    </div>
+
+    <script>
+        document.addEventListener("scroll", () => {
+            document.querySelectorAll(".section").forEach(section => {
+                if (section.getBoundingClientRect().top < window.innerHeight - 50) {
+                    section.classList.add("visible");
+                }
+            });
+        });
+
+        let questions = [
+            { q: "Когда родился Максим Горький?", a: ["1868", "1901", "1850", "1885"], correct: 0 },
+            { q: "Настоящее имя Горького?", a: ["Алексей Пешков", "Иван Бунин", "Антон Чехов", "Фёдор Достоевский"], correct: 0 },
+            { q: "Как назывался первый рассказ?", a: ["Макар Чудра", "Старуха Изергиль", "Челкаш", "Мать"], correct: 0 },
+            { q: "Какое произведение о матери-революционерке?", a: ["Мать", "На дне", "Фома Гордеев", "Жизнь Клима Самгина"], correct: 0 },
+            { q: "Где родился Горький?", a: ["Нижний Новгород", "Москва", "Санкт-Петербург", "Казань"], correct: 0 },
+            { q: "Где умер Горький?", a: ["Москва", "Нижний Новгород", "Горький", "Казань"], correct: 0 },
+            { q: "Какое произведение Горького о жизни рабочих?", a: ["Фома Гордеев", "Мать", "Жизнь Клима Самгина", "На дне"], correct: 1 },
+            { q: "Какая пьеса принесла ему популярность?", a: ["На дне", "Дети солнца", "Старик", "Последние"], correct: 0 },
+            { q: "Как звали главного героя «Жизни Клима Самгина»?", a: ["Клим", "Макар", "Павел", "Фома"], correct: 0 },
+            { q: "Год смерти Горького?", a: ["1936", "1920", "1945", "1917"], correct: 0 }
+        ];
+        let index = 0;
+        let score = 0;
+        let timer;
+
+        function startQuiz() {
+            document.getElementById("quiz").style.display = "block";
+            nextQuestion();
+        }
+
+        function startTimer() {
+            let timeLeft = 30;
+            document.getElementById("timer").innerText = `Оставшееся время: ${timeLeft} сек.`;
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById("timer").innerText = `Оставшееся время: ${timeLeft} сек.`;
+                if (timeLeft === 0) {
+                    clearInterval(timer);
+                    nextQuestion();
+                }
+            }, 1000);
+        }
+        function nextQuestion() {
+            clearInterval(timer);
+            if (index < questions.length) {
+                document.getElementById("question").innerText = questions[index].q;
+                let answersHTML = "";
+                questions[index].a.forEach((ans, i) => {
+                    answersHTML += `<button onclick='checkAnswer(${i})'>${ans}</button> `;
+                });
+                document.getElementById("answers").innerHTML = answersHTML;
+                startTimer();
+            } else {
+                document.getElementById("question").innerText = "Викторина завершена!";
+                document.getElementById("answers").innerHTML = `Ваш итоговый счёт: ${score}`;
+                document.getElementById("timer").style.display = "none";
+            }
+            index++;
+        }
+        function checkAnswer(selected) {
+            if (selected === questions[index - 1].correct) {
+                score += 10;
+            }
+            document.getElementById("score").innerText = `Очки: ${score}`;
+            nextQuestion();
+        }
+    </script>
+</body>
+</html>
